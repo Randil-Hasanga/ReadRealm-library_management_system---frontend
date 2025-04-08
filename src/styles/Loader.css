@@ -1,0 +1,59 @@
+/* Loader.css */
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.blob {
+    width: 80px;
+    height: 80px;
+    display: grid;
+    background: transparent;
+    filter: blur(1px) contrast(10);
+    padding: 8px;
+    mix-blend-mode: darken;
+ }
+ 
+ .blob:before,
+ .blob:after {
+    content: "";
+    grid-area: 1/1;
+    width: 32px;
+    height: 32px;
+    background: #000000;
+    animation: blob-rhf26m 2s infinite;
+ }
+ 
+ .blob:after {
+    animation-delay: -1s;
+ }
+ 
+ @keyframes blob-rhf26m {
+    0% {
+       transform: translate(0, 0);
+    }
+ 
+    25% {
+       transform: translate(100%, 0);
+    }
+ 
+    50% {
+       transform: translate(100%, 100%);
+    }
+ 
+    75% {
+       transform: translate(0, 100%);
+    }
+ 
+    100% {
+       transform: translate(0, 0);
+    }
+ }
