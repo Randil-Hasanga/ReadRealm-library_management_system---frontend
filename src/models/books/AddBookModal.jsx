@@ -62,10 +62,9 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                 }));
             }
         } else if (name === 'quantity') {
-            value = parseInt(value);
             setNewBook((prevState) => ({
                 ...prevState,
-                [name]: value,
+                [name]: parseInt(value),
             }));
         }
         else {
