@@ -5,9 +5,9 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
     const [newBook, setNewBook] = useState({
         book_name: "",
         ISBN: "",
-        author_id:0,
-        quantity:0,
-        available_qty:0,
+        author_id: 0,
+        quantity: 0,
+        available_qty: 0,
     });
     const [authors, setAuthors] = useState([]);
     const [filteredAuthors, setFilteredAuthors] = useState([]);
@@ -61,7 +61,14 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                     author_id: "",
                 }));
             }
-        } else {
+        } else if (name === 'quantity') {
+            value = parseInt(value);
+            setNewBook((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
+        }
+        else {
             setNewBook((prevState) => ({
                 ...prevState,
                 [name]: value,
@@ -150,7 +157,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             <input
                                 type="number"
                                 name="quantity"
-                                value={parseInt(newBook.quantity)}
+                                value={newBook.quantity}
                                 onChange={handleInputChange}
                                 required
                                 className="mt-2 w-full px-4 py-2 border border-gray-300
