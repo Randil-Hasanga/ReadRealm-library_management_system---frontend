@@ -5,9 +5,9 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
     const [newBook, setNewBook] = useState({
         book_name: "",
         ISBN: "",
-        author_id,
-        quantity,
-        available_qty,
+        author_id:0,
+        quantity:0,
+        available_qty:0,
     });
     const [authors, setAuthors] = useState([]);
     const [filteredAuthors, setFilteredAuthors] = useState([]);
