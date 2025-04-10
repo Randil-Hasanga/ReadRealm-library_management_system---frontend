@@ -150,7 +150,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             <input
                                 type="number"
                                 name="quantity"
-                                value={newBook.quantity}
+                                value={parseInt(newBook.quantity)}
                                 onChange={handleInputChange}
                                 required
                                 className="mt-2 w-full px-4 py-2 border border-gray-300
