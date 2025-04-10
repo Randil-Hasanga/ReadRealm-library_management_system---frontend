@@ -7,7 +7,6 @@ const BookService = {
   getBooks: async () => {
     try {
       const response = await axios.get(baseUrl, {withCredentials: true});
-      console.log(baseUrl);
       return response.data.data;
     } catch (error) {
       console.error("Error fetching books:", error);
@@ -18,7 +17,7 @@ const BookService = {
   addBook: async (bookData) => {
     try {
       console.log(bookData);
-      const response = await axios.post(baseUrl, bookData);
+      const response = await axios.post(baseUrl, bookData, {withCredentials:true});
       console.log("Book added:", response.data.data);
       return response.data.data;
     } catch (error) {
