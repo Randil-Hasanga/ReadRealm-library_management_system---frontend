@@ -2,13 +2,23 @@ import axios from "axios";
 import FineService from "./FineService";
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/borrowed-books`;
+let cachedBorrowedBooks = null;
+let lastFetched = null;
+const CACHE_DURATION = 5 * 60 * 1000;
 
 const BorrowedBooksService = {
-  getBorrowedBooks: async () => {
+  getBorrowedBooks: async (forceRefresh = false) => {
+    const now = new Date().getTime();
+
+    if (!forceRefresh && cachedBorrowedBooks && (now - lastFetched < CACHE_DURATION)) {
+      return cachedBorrowedBooks;
+    }
     try {
-      const response = await axios.get(baseUrl);
-      console.log(baseUrl);
-      return response.data.data;
+      const response = await axios.get(baseUrl, { withCredentials: true });
+      cachedBorrowedBooks = response.data.data;
+      console.log(baseUrl)
+      lastFetched = now;
+      return cachedBorrowedBooks;
     } catch (error) {
       console.error("Error fetching books:", error);
       throw error;
@@ -17,7 +27,7 @@ const BorrowedBooksService = {
   getOverdueBooks: async () => {
     try {
       const response = await axios.get(`${baseUrl}/over-due`);
-      console.log(baseUrl);
+      // console.log(`${baseUrl}/over-due`);
       return response.data.data;
     } catch (error) {
       console.error("Error fetching books:", error);

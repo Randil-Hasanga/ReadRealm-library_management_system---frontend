@@ -8,6 +8,7 @@ const menuItems = [
   { label: "Dashboard", icon: Home, path: "/" },
   { label: "Books", icon: BookAIcon, path: "/books" },
   { label: "Borrowed Books", icon: BookMinus, path: "/borrowed-books" },
+  { label: "Borrowers", icon: User, path: "/borrowers" },
   { label: "Fines", icon: DollarSign, path: "/fines" },
 ];
 

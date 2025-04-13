@@ -1,13 +1,23 @@
 import axios from "axios";
 
 const baseUrl = `${import.meta.env.VITE_BASE_URL}/fines`;
+let cachedFines = null;
+let lastFetched = null;
+const CACHE_DURATION = 5 * 60 * 1000;
 
 const FineService = {
-  getFines: async () => {
+  getFines: async (forceRefresh = false) => {
+    const now = new Date().getTime();
+
+    if (!forceRefresh && cachedFines && (now - lastFetched < CACHE_DURATION)) {
+      return cachedFines;
+    }
     try {
       const response = await axios.get(baseUrl);
-      console.log(baseUrl);
-      return response.data.data;
+      console.log(baseUrl)
+      cachedFines = response.data.data;
+      lastFetched = now;
+      return cachedFines;
     } catch (error) {
       console.error("Error fetching fines:", error);
       throw error;
@@ -22,7 +32,7 @@ const FineService = {
       throw error;
     }
   },
-  payFine: async(fineId) => {
+  payFine: async (fineId) => {
     try {
       const response = await axios.patch(`${baseUrl}/${fineId}`);
       return response.data.data || [];

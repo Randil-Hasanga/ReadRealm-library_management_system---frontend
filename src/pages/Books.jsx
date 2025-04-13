@@ -7,12 +7,12 @@ import AddBookModal from "../models/books/AddBookModal";
 import UpdateBookModal from "../models/books/UpdateBookModal";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 import ReturnConfirmationDialog from "../components/ReturnConfirmationDialog";
-import Pagination from "../components/Pagination"; // Import Pagination Component
+import Pagination from "../components/Pagination";
 
 const Books = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(2);
   const [loading, setLoading] = useState(true);
   const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
   const [isUpdateBookModalOpen, setIsUpdateBookModalOpen] = useState(false);
@@ -198,19 +198,21 @@ const Books = () => {
         onClose={handleCloseAddBookModal}
         onSubmit={handleAddBookSubmit}
       />
-      <UpdateBookModal
+      {selectedBook && (<UpdateBookModal
         isOpen={isUpdateBookModalOpen}
         onClose={handleCloseUpdateBookModal}
         onSubmit={handleUpdateBookSubmit}
         book={selectedBook}
-      />
-      <DeleteConfirmationDialog
+      />)}
+
+      {selectedBook && (<DeleteConfirmationDialog
         isOpen={isDeleteDialogOpen}
         onClose={handleCloseDeleteConfirmation}
         onConfirm={handleDeleteBookSubmit}
         type="book"
         name={selectedBook ? selectedBook.book_name : ''}
-      />
+      />)}
+
     </div>
   );
 };

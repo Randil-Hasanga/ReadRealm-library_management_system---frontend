@@ -21,9 +21,9 @@ const PayFineConfirmationDialog = ({ isOpen, onClose, onConfirm, type, name, amo
                         <button
                             type="button"
                             onClick={onConfirm}
-                            className="bg-red-600 text-white px-6 py-2 rounded-md"
+                            className="bg-green-600 text-white px-6 py-2 rounded-md"
                         >
-                            Delete
+                            Pay
                         </button>
                     </div>
                 </div>
