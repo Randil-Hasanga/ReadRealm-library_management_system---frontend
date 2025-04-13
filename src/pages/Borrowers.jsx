@@ -91,8 +91,15 @@ const Borrowers = () => {
     const handleDeleteSubmit = async () => {
         try {
             const id = selectedBorrower.borrower_id;
-            await BorrowerService.deleteBorrower(id);
-            setBorrowers((prev) => prev.filter((b) => b.borrower_id !== id));
+            const response = await BorrowerService.deleteBorrower(id);
+            if (typeof (response.effectedRows) == 'string') {
+                alert('Borrower has unpaid fines')
+            } else {
+                const updatedList = await BorrowerService.getBorrowers(true); // force refresh
+                setBorrowers(updatedList);
+
+            }
+
             setIsDeleteDialogOpen(false);
             setSelectedBorrower(null);
         } catch (error) {
@@ -168,7 +175,7 @@ const Borrowers = () => {
                     onClose={handleCloseDeleteDialog}
                     onConfirm={handleDeleteSubmit}
                     type="borrower"
-                    name={`${selectedBorrower.fname} ${selectedBorrower.lname}`}
+                    name={`${selectedBorrower.BorrowerFullName}`}
                 />
             )}
         </div>

@@ -13,7 +13,7 @@ const FineService = {
       return cachedFines;
     }
     try {
-      const response = await axios.get(baseUrl);
+      const response = await axios.get(baseUrl,  { withCredentials: true });
       console.log(baseUrl)
       cachedFines = response.data.data;
       lastFetched = now;
@@ -25,7 +25,7 @@ const FineService = {
   },
   getFineByBbId: async (bb_id) => {
     try {
-      const response = await axios.get(`${baseUrl}/bb/${bb_id}`);
+      const response = await axios.get(`${baseUrl}/bb/${bb_id}`,  { withCredentials: true });
       return response.data.data || [];
     } catch (error) {
       console.error(`Error fetching fine with bb_ID ${bb_id}:`, error);
@@ -34,7 +34,7 @@ const FineService = {
   },
   payFine: async (fineId) => {
     try {
-      const response = await axios.patch(`${baseUrl}/${fineId}`);
+      const response = await axios.patch(`${baseUrl}/${fineId}`,  { withCredentials: true });
       return response.data.data || [];
     } catch (error) {
       console.error(`Error fetching fine with bb_ID ${fineId}:`, error);
