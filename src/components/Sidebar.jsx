@@ -5,7 +5,7 @@ import logo from "../assets/ReadRealm.jpg";
 import logoIcon from "../assets/icon.jpg"; // Fixed the file extension here
 
 const menuItems = [
-  { label: "Dashboard", icon: Home, path: "/" },
+  { label: "Dashboard", icon: Home, path: "/dashboard" },
   { label: "Books", icon: BookAIcon, path: "/books" },
   { label: "Borrowed Books", icon: BookMinus, path: "/borrowed-books" },
   { label: "Borrowers", icon: User, path: "/borrowers" },

@@ -12,7 +12,7 @@ import Pagination from "../components/Pagination";
 const Books = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(2);
+  const [itemsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
   const [isUpdateBookModalOpen, setIsUpdateBookModalOpen] = useState(false);

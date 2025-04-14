@@ -54,8 +54,10 @@ const Borrowers = () => {
 
     const handleAddSubmit = async (newBorrower) => {
         try {
-            const added = await BorrowerService.addBorrower(newBorrower);
-            setBorrowers((prev) => [...prev, added]);
+            await BorrowerService.addBorrower(newBorrower);
+            const updatedList = await BorrowerService.getBorrowers(true); // force refresh
+            setBorrowers(updatedList);
+
             setIsAddModalOpen(false);
         } catch (error) {
             console.error("Add Error:", error);
@@ -69,7 +71,6 @@ const Borrowers = () => {
             const result = await BorrowerService.updateBorrower(borrowerId, updatedBorrower);
             console.log("Updated Borrower:", result);
 
-            console.log('setBorrowers start')
             setBorrowers((prevBorrowers) =>
                 prevBorrowers.map((borrower) =>
                     borrower.borrower_id === borrowerId
@@ -78,7 +79,7 @@ const Borrowers = () => {
                 )
             );
 
-            console.log('setBorrowers end')
+
 
             setIsUpdateModalOpen(false);
             setSelectedBorrower(null);

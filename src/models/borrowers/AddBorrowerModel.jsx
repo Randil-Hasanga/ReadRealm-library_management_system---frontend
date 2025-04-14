@@ -1,93 +1,26 @@
-import { useState, useEffect } from "react";
-import BorrowerService from "../../services/BorrowerService"; // Adjust to your actual service for Borrower
+import { useState } from "react";
 
 const AddBorrowerModal = ({ isOpen, onClose, onSubmit }) => {
     const [newBorrower, setNewBorrower] = useState({
-        borrower_name: "",
-        email: "",
-        phone_number: "",
+        fname: "",
+        lname: "",
         address: "",
+        NIC: "",
+        email: "",
+        contact_no: ""
     });
-    const [borrowers, setBorrowers] = useState([]);
-    const [filteredBorrowers, setFilteredBorrowers] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [loadingBorrowers, setLoadingBorrowers] = useState(false);
-    const [borrowerWarning, setBorrowerWarning] = useState(""); // State for warning message
 
-    // Fetch all borrowers when the modal opens
-    useEffect(() => {
-        const fetchBorrowers = async () => {
-            setLoadingBorrowers(true);
-            try {
-                const borrowersData = await BorrowerService.getBorrowers();
-                setBorrowers(borrowersData);
-                setFilteredBorrowers(borrowersData);
-            } catch (error) {
-                console.error("Error fetching borrowers:", error);
-            } finally {
-                setLoadingBorrowers(false);
-            }
-        };
-
-        if (isOpen) {
-            fetchBorrowers();
-        }
-    }, [isOpen]);
-
-    // Filter borrowers based on search query
-    useEffect(() => {
-        if (searchQuery) {
-            const filtered = borrowers.filter((borrower) =>
-                borrower.borrower_name.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            setFilteredBorrowers(filtered);
-        } else {
-            setFilteredBorrowers(borrowers);
-        }
-    }, [searchQuery, borrowers]);
-
-    // Handle input changes in the form
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        if (name === "borrower_name") {
-            setSearchQuery(value);
-            setBorrowerWarning(""); // Clear warning when user types
-        }
-
         setNewBorrower((prevState) => ({
             ...prevState,
             [name]: value,
         }));
     };
 
-    // Handle borrower selection from the datalist
-    const handleBorrowerSelection = (e) => {
-        const selectedBorrower = borrowers.find(
-            (borrower) => borrower.borrower_name === e.target.value
-        );
-        if (selectedBorrower) {
-            setNewBorrower((prevState) => ({
-                ...prevState,
-                borrower_id: selectedBorrower.borrower_id,
-            }));
-            setSearchQuery(selectedBorrower.borrower_name);
-            setBorrowerWarning(""); // Clear warning if a valid borrower is selected
-        } else {
-            setBorrowerWarning("Borrower not found. Please select a valid borrower.");
-        }
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Check if the borrower exists before submitting
-        const selectedBorrower = borrowers.find(
-            (borrower) => borrower.borrower_name === searchQuery
-        );
-        if (!selectedBorrower) {
-            setBorrowerWarning("Please select a valid borrower.");
-            return; // Prevent submission if borrower is invalid
-        }
+        // You can add validation here if needed
         onSubmit({ ...newBorrower });
     };
 
@@ -98,11 +31,22 @@ const AddBorrowerModal = ({ isOpen, onClose, onSubmit }) => {
                     <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Borrower</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-5">
-                            <label className="block text-sm font-medium text-gray-700">Borrower Name</label>
+                            <label className="block text-sm font-medium text-gray-700">First Name</label>
                             <input
                                 type="text"
-                                name="borrower_name"
-                                value={newBorrower.borrower_name}
+                                name="fname"
+                                value={newBorrower.fname}
+                                onChange={handleInputChange}
+                                required
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
+                            />
+                        </div>
+                        <div className="mb-5">
+                            <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input
+                                type="text"
+                                name="lname"
+                                value={newBorrower.lname}
                                 onChange={handleInputChange}
                                 required
                                 className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
@@ -123,8 +67,19 @@ const AddBorrowerModal = ({ isOpen, onClose, onSubmit }) => {
                             <label className="block text-sm font-medium text-gray-700">Phone Number</label>
                             <input
                                 type="text"
-                                name="phone_number"
-                                value={newBorrower.phone_number}
+                                name="contact_no"
+                                value={newBorrower.contact_no}
+                                onChange={handleInputChange}
+                                required
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
+                            />
+                        </div>
+                        <div className="mb-5">
+                            <label className="block text-sm font-medium text-gray-700">NIC</label>
+                            <input
+                                type="text"
+                                name="NIC"
+                                value={newBorrower.NIC}
                                 onChange={handleInputChange}
                                 required
                                 className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"

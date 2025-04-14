@@ -25,8 +25,6 @@ const BorrowerService = {
   updateBorrower: async (borrower_id, borrower_data) => {
     try {
       const response = await axios.patch(`${baseUrl}/${borrower_id}`, borrower_data, { withCredentials: true });
-      console.log('Inside update borower');
-      console.log(response.data)
       return response.data;
     } catch (error) {
       console.error("Error updating book:", error);
@@ -40,6 +38,15 @@ const BorrowerService = {
       return response.data;
     } catch (error) {
       console.error("Error deleting borrower:", error);
+    }
+  },
+  addBorrower: async (borrowerData) => {
+    try {
+      const response = await axios.post(baseUrl, borrowerData, { withCredentials: true });
+      return response.data.data;
+    } catch (error) {
+      console.error("Error adding book:", error);
+      throw error;
     }
   },
 
