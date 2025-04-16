@@ -24,6 +24,16 @@ const BookService = {
     }
   },
 
+  getBookCountByAuthor: async (author_id) => {
+    try {
+      const count = await axios.get(`${baseUrl}/count/${author_id}`)
+      return count.data.BookCount;
+    } catch (error) {
+      console.error("Error fetching book count:", error);
+      throw error;
+    }
+  },
+
   addBook: async (bookData) => {
     try {
       const response = await axios.post(baseUrl, bookData, { withCredentials: true });
@@ -36,7 +46,7 @@ const BookService = {
 
   updateBook: async (bookId, bookData) => {
     try {
-      const response = await axios.patch(`${baseUrl}/${bookId}`, bookData,  { withCredentials: true });
+      const response = await axios.patch(`${baseUrl}/${bookId}`, bookData, { withCredentials: true });
       return response.data.data;
     } catch (error) {
       console.error("Error updating book:", error);

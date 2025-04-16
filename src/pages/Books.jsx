@@ -72,7 +72,8 @@ const Books = () => {
     try {
       const addedBook = await BookService.addBook(newBook);
       console.log("Added Book:", addedBook);
-      setBooks((prevBooks) => [...prevBooks, addedBook]);
+      const updatedList = await BookService.getBooks(true);
+      setBooks(updatedList);
       setIsAddBookModalOpen(false);
     } catch (error) {
       console.error("Error adding book:", error);
@@ -86,11 +87,9 @@ const Books = () => {
       const bookId = selectedBook.book_id;
       const result = await BookService.updateBook(bookId, updatedBook);
       console.log("Updated Book:", result);
-      setBooks((prevBooks) =>
-        prevBooks.map((book) =>
-          book.book_id === bookId ? { ...book, ...updatedBook } : book
-        )
-      );
+
+      const updatedList = await BookService.getBooks(true);
+      setBooks(updatedList);
       setIsUpdateBookModalOpen(false);
       setSelectedBook(null);
     } catch (error) {
@@ -116,7 +115,8 @@ const Books = () => {
         return;
       }
 
-      setBooks((prevBooks) => prevBooks.filter((book) => book.book_id !== bookId));
+      const updatedList = await BookService.getBooks(true);
+      setBooks(updatedList);
 
       setIsDeleteDialogOpen(false);
       setSelectedBook(null);

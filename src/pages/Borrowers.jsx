@@ -71,13 +71,8 @@ const Borrowers = () => {
             const result = await BorrowerService.updateBorrower(borrowerId, updatedBorrower);
             console.log("Updated Borrower:", result);
 
-            setBorrowers((prevBorrowers) =>
-                prevBorrowers.map((borrower) =>
-                    borrower.borrower_id === borrowerId
-                        ? { ...borrower, ...updatedBorrower, BorrowerFullName: `${updatedBorrower.fname} ${updatedBorrower.lname}` }
-                        : borrower
-                )
-            );
+            const updatedList = await BorrowerService.getBorrowers(true); // force refresh
+            setBorrowers(updatedList);
 
 
 

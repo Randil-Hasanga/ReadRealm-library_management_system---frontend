@@ -75,7 +75,8 @@ const BorrowedBooks = () => {
                 return;
             }
 
-            setBorrowedBooks((prevBooks) => prevBooks.filter((book) => book.BorrowedBookID !== bb_id));
+            const updatedList = await BorrowedBooksService.getBorrowedBooks(true);
+            setBorrowedBooks(updatedList);
             setIsReturnDialogOpen(false);
             setSelectedBorrowedBook(null);
         } catch (error) {
