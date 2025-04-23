@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(false);
+      setLoading(true);
       try {
         const borrowerData = await BorrowedBooksService.getRecentBorrowers();
         const summaryData = await SummaryService.getDashboardSummary();
