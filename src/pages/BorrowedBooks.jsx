@@ -86,7 +86,6 @@ const BorrowedBooks = () => {
     };
 
     const columns = [
-        { label: "ID", field: "BorrowedBookID" },
         { label: "Book Name", field: "BookName" },
         { label: "Borrower", field: "BorrowerFullName" },
         { label: "Email", field: "email" },

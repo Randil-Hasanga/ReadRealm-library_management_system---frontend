@@ -3,21 +3,33 @@ import BackgroundImg from '../assets/books-arrangement-with-copy-space.jpg';
 import LogoColored from '../assets/Logo.png';
 import AuthService from '../services/AuthService';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader'; // Import the Loader component
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // State to track loading
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const status = await AuthService.login({email, password})
-
-    if(status == 201){
-        navigate('/dashboard')
+    setLoading(true); // Show the loader
+    try {
+      const status = await AuthService.login({ email, password });
+      if (status === 201) {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false); // Hide the loader
     }
   };
+
+  if (loading) {
+    return <Loader />; // Display the loader while loading
+  }
 
   return (
     <div

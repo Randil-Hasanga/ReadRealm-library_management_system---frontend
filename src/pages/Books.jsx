@@ -137,7 +137,6 @@ const Books = () => {
 
   // Table columns for books
   const columns = [
-    { label: "ID", field: "book_id" },
     { label: "Book Name", field: "book_name" },
     { label: "Author", field: "author_name" },
     { label: "ISBN", field: "ISBN" },

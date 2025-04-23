@@ -58,7 +58,17 @@ const BorrowedBooksService = {
       console.error("Error returning book:", error);
       throw error; // Rethrow or handle as needed
     }
-  }
+  },
+
+  getRecentBorrowers: async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/recent-borrowers`, { withCredentials: true });
+      return response.data.data || [];
+    } catch (error) {
+      console.error("Error fetching recent borrowers:", error);
+      throw error;
+    }
+  },
 
 
 }

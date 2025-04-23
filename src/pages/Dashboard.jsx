@@ -1,36 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook, faUser, faCheck, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import BorrowedBooksService from '../services/BorrowedBooksService';
+import SummaryService from '../services/SummaryService';
+import { useNavigate } from 'react-router-dom';
+import AuthService from '../services/AuthService';
 
 const Dashboard = () => {
-  const data = [
-    { name: 'Available', value: 50 },
-    { name: 'Borrowed', value: 30 },
-    { name: 'Reserved', value: 70 },
-  ];
+  const [borrowers, setBorrowers] = useState([]);
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
-  const stats = [
-    { label: 'Books', value: 150, icon: '📚' },
-    { label: 'Borrowers', value: 120, icon: '🧑‍💼' },
-    { label: 'Borrowed Books', value: 45, icon: '✅' },
-    { label: 'Fines', value: '$320', icon: '💰' },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const borrowerData = await BorrowedBooksService.getRecentBorrowers();
+        const summaryData = await SummaryService.getDashboardSummary();
 
-  const borrowers = [
-    { name: 'John Doe', book: 'The Great Gatsby', due: '2023-05-10' },
-    { name: 'Jane Smith', book: '1984', due: '2023-05-12' },
-    { name: 'Michael Johnson', book: 'To Kill a Mockingbird', due: '2023-05-15' },
-    { name: 'Emily Brown', book: 'Pride and Prejudice', due: '2023-05-18' },
-    { name: 'Daniel Wilson', book: 'Moby Dick', due: '2023-05-20' },
-  ];
+        setBorrowers(borrowerData || []);
+        setSummary(summaryData);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        setErrorMessage("Failed to fetch dashboard data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <p className="p-4">Loading dashboard...</p>;
+  if (errorMessage) return <p className="p-4 text-red-500">{errorMessage}</p>;
+
+  const stats = summary ? [
+    { label: 'Books', value: summary.totalBooks, icon: faBook },
+    { label: 'Borrowers', value: summary.totalBorrowers, icon: faUser },
+    { label: 'Borrowed Books', value: summary.borrowedBooksCount, icon: faCheck },
+    { label: 'Fines', value: `$${summary.unpaidFinesSum}`, icon: faDollarSign },
+  ] : [];
+
+  const chartData = summary ? [
+    { name: 'Available Books', value: summary.totalBooks - summary.borrowedBooksCount },
+    { name: 'Borrowed Books', value: summary.borrowedBooksCount },
+  ] : [];
+
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
+      navigate('/');
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  }
+
+  const COLORS = ['#ff8904', '#6a7282']; // Modern color palette
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col">
       {/* Top bar */}
       <div className="flex justify-between items-center mb-8 bg-white p-4 rounded shadow">
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+        <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onClick={handleLogout}>
           Log out
         </button>
       </div>
@@ -38,8 +74,13 @@ const Dashboard = () => {
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((item, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-xl shadow text-center">
-            <div className="text-5xl mb-4">{item.icon}</div>
+          <div
+            key={idx}
+            className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition-shadow duration-300"
+          >
+            <div className="text-5xl mb-4 text-orange-500">
+              <FontAwesomeIcon icon={item.icon} />
+            </div>
             <h3 className="text-4xl font-semibold text-gray-700 mb-2">{item.value}</h3>
             <p className="text-2xl text-gray-500">{item.label}</p>
           </div>
@@ -62,7 +103,10 @@ const Dashboard = () => {
               </thead>
               <tbody>
                 {borrowers.map((b, index) => (
-                  <tr key={index} className="border-t hover:bg-gray-50">
+                  <tr
+                    key={index}
+                    className={`border-t ${index % 2 === 0 ? 'bg-gray-50' : ''} hover:bg-gray-100`}
+                  >
                     <td className="py-2 px-4">{b.name}</td>
                     <td className="py-2 px-4">{b.book}</td>
                     <td className="py-2 px-4">{b.due}</td>
@@ -73,18 +117,30 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Chart */}
-        <div className="bg-white p-6 rounded-xl shadow flex flex-col">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Books Overview</h3>
-          <div className="flex-grow">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
+        {/* Pie Chart */}
+        <div className="bg-white p-6 rounded-xl shadow flex flex-col justify-center">
+          <h3 className="text-left text-lg font-semibold text-gray-700 mb-4">Books Overview</h3>
+          <div className="flex-grow w-full">
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={90}
+                  outerRadius={150}
+                  fill="#8884d8"
+                  label={({ name, value }) => `${name}: ${value}`}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
                 <Tooltip />
-                <Bar dataKey="value" fill="#60A5FA" radius={[8, 8, 0, 0]} />
-              </BarChart>
+                <Legend verticalAlign="bottom" height={36} />
+              </PieChart>
             </ResponsiveContainer>
           </div>
         </div>

@@ -115,7 +115,6 @@ const Borrowers = () => {
     const handlePageChange = (page) => setCurrentPage(page);
 
     const columns = [
-        { label: "ID", field: "borrower_id" },
         { label: "Borrower Name", field: "BorrowerFullName" },
         { label: "NIC", field: "NIC" },
         { label: "Email", field: "email" },

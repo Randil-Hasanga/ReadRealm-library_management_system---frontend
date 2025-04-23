@@ -11,7 +11,15 @@ const AuthService = {
         } catch (error) {
             
         }
-    }
+    },
+    logout: async () => {
+        try {
+            const response = await axios.post(`${baseUrl}/logout`);
+            return response.status;
+        } catch (error) {
+            
+        }
+    },
 }
 
 export default AuthService;

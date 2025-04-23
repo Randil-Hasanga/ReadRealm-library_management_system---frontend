@@ -107,7 +107,6 @@ const Authors = () => {
     const handlePageChange = (page) => setCurrentPage(page);
 
     const columns = [
-        { label: "Author ID", field: "author_id" },
         { label: "Author Name", field: "author_name" },
         { label: "Books Count", field: "books_count" },  // Updated to include book count
     ];
