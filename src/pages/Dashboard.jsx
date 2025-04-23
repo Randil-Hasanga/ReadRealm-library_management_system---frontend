@@ -8,6 +8,8 @@ import BorrowedBooksService from '../services/BorrowedBooksService';
 import SummaryService from '../services/SummaryService';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/AuthService';
+import Loader from '../components/Loader'; // Import the Loader component
+import '../styles/Dashboard.css'; // Import the CSS for transitions
 
 const Dashboard = () => {
   const [borrowers, setBorrowers] = useState([]);
@@ -18,7 +20,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
         const borrowerData = await BorrowedBooksService.getRecentBorrowers();
         const summaryData = await SummaryService.getDashboardSummary();
@@ -29,13 +30,20 @@ const Dashboard = () => {
         console.error("Error fetching dashboard data:", error);
         setErrorMessage("Failed to fetch dashboard data.");
       } finally {
-        setLoading(false);
+        setTimeout(() => setLoading(false), 500); // Add a slight delay for smooth transition
       }
     };
 
     fetchData();
   }, []);
-  if (errorMessage) return <p className="p-4 text-red-500">{errorMessage}</p>;
+
+  if (loading) {
+    return <Loader />; // Show the loader while loading
+  }
+
+  if (errorMessage) {
+    return <p className="p-4 text-red-500">{errorMessage}</p>;
+  }
 
   const stats = summary ? [
     { label: 'Books', value: summary.totalBooks || 0, icon: faBook },
@@ -56,12 +64,12 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error logging out:", error);
     }
-  }
+  };
 
   const COLORS = ['#ff8904', '#6a7282']; // Modern color palette
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex flex-col">
+    <div className="dashboard-container fade-in"> {/* Add fade-in class */}
       {/* Top bar */}
       <div className="flex justify-between items-center mb-8 bg-white p-4 rounded shadow">
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
