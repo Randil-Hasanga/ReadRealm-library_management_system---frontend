@@ -37,10 +37,10 @@ const Dashboard = () => {
   if (errorMessage) return <p className="p-4 text-red-500">{errorMessage}</p>;
 
   const stats = summary ? [
-    { label: 'Books', value: summary.totalBooks, icon: faBook },
-    { label: 'Borrowers', value: summary.totalBorrowers, icon: faUser },
-    { label: 'Borrowed Books', value: summary.borrowedBooksCount, icon: faCheck },
-    { label: 'Fines', value: `$${summary.unpaidFinesSum}`, icon: faDollarSign },
+    { label: 'Books', value: summary.totalBooks || 0, icon: faBook },
+    { label: 'Borrowers', value: summary.totalBorrowers || 0, icon: faUser },
+    { label: 'Borrowed Books', value: summary.borrowedBooksCount || 0, icon: faCheck },
+    { label: 'Fines', value: `$${summary.unpaidFinesSum || 0}`, icon: faDollarSign },
   ] : [];
 
   const chartData = summary ? [
