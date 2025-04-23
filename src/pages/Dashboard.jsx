@@ -34,8 +34,6 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
-
-  if (loading) return <p className="p-4">Loading dashboard...</p>;
   if (errorMessage) return <p className="p-4 text-red-500">{errorMessage}</p>;
 
   const stats = summary ? [
