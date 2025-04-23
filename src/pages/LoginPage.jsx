@@ -1,20 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackgroundImg from '../assets/books-arrangement-with-copy-space.jpg';
 import LogoColored from '../assets/Logo.png';
 import AuthService from '../services/AuthService';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../components/Loader'; // Import the Loader component
+import '../styles/LoginPage.css'; // Import the CSS for transitions
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // State to track loading
+  const [loading, setLoading] = useState(true); // State to track loading
+  const [authLoading, setAuthLoading] = useState(false); // State to track login loading
+  const [fadeOut, setFadeOut] = useState(false); // State to handle fade-out effect
 
   const navigate = useNavigate();
 
+  // Fallback to stop loading after a timeout (in case onLoad doesn't fire)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000); // 5 seconds fallback timeout
+
+    return () => clearTimeout(timeout); // Cleanup timeout on unmount
+  }, []);
+
+  const handleImageLoad = () => {
+    setTimeout(() => {
+      setFadeOut(true); // Trigger fade-out effect
+      setTimeout(() => setLoading(false), 500); // Wait for fade-out animation to complete
+    }, 100); // Small delay to ensure smooth transition
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show the loader
+    setAuthLoading(true); // Show the loader during login
     try {
       const status = await AuthService.login({ email, password });
       if (status === 201) {
@@ -23,19 +42,27 @@ const LoginPage = ({ onLogin }) => {
     } catch (error) {
       console.error('Login failed:', error);
     } finally {
-      setLoading(false); // Hide the loader
+      setAuthLoading(false); // Hide the loader after login
     }
   };
 
-  if (loading) {
-    return <Loader />; // Display the loader while loading
+  if (loading || authLoading) {
+    return <div className={`loader-wrapper ${fadeOut ? 'fade-out' : ''}`}><Loader /></div>; // Add fade-out class
   }
 
   return (
     <div
-      className="min-h-screen flex items-center p-6 bg-cover bg-center"
+      className="min-h-screen flex items-center p-6 bg-cover bg-center fade-in"
       style={{ backgroundImage: `url(${BackgroundImg})` }}
     >
+      {/* Hidden image to detect when the background image is loaded */}
+      <img
+        src={BackgroundImg}
+        alt="Background"
+        className="hidden"
+        onLoad={handleImageLoad}
+      />
+
       <div className="bg-white/90 backdrop-blur-sm w-full max-w-md rounded-2xl shadow-xl p-8 border border-orange-300 ml-96 justify-start">
         <div className="flex items-center justify-center mb-6">
           <img src={LogoColored} alt="Logo" className="h-12 w-auto rounded-xl shadow" />

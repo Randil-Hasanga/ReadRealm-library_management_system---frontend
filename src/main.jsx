@@ -1,24 +1,32 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import Dashboard from './pages/Dashboard';
-import Books from './pages/Books';
-import BorrowedBooks from './pages/BorrowedBooks';
-import Fines from './pages/Fines';
-import LoginPage from './pages/LoginPage';
-import Borrowers from './pages/Borrowers';
-import Authors from './pages/Authors';
+import Loader from './components/Loader';
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Books = lazy(() => import('./pages/Books'));
+const BorrowedBooks = lazy(() => import('./pages/BorrowedBooks'));
+const Fines = lazy(() => import('./pages/Fines'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const Borrowers = lazy(() => import('./pages/Borrowers'));
+const Authors = lazy(() => import('./pages/Authors'));
 
 const router = createBrowserRouter([
-  { path: '/', element: (<LoginPage />), },
-  { path: '/dashboard', element: (<App><Dashboard /></App>), },
-  { path: '/books', element: (<App><Books /></App>), },
-  { path: '/authors', element: (<App><Authors /></App>), },
-  { path: '/borrowed-books', element: (<App><BorrowedBooks /></App>), },
-  { path: '/fines', element: (<App><Fines /></App>), },
-  { path: '/borrowers', element: (<App><Borrowers /></App>), }
+  { path: '/', element: <Suspense fallback={<Loader />}><LoginPage /></Suspense> },
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      { path: 'dashboard', element: <Suspense fallback={<Loader />}><Dashboard /></Suspense> },
+      { path: 'books', element: <Suspense fallback={<Loader />}><Books /></Suspense> },
+      { path: 'authors', element: <Suspense fallback={<Loader />}><Authors /></Suspense> },
+      { path: 'borrowed-books', element: <Suspense fallback={<Loader />}><BorrowedBooks /></Suspense> },
+      { path: 'fines', element: <Suspense fallback={<Loader />}><Fines /></Suspense> },
+      { path: 'borrowers', element: <Suspense fallback={<Loader />}><Borrowers /></Suspense> },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById('root')).render(

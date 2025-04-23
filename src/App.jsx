@@ -1,24 +1,16 @@
-import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/Sidebar';
-import PropTypes from 'prop-types';
 
-function App({ children }) {
-  const [expanded, setExpanded] = useState(true); // State to control sidebar expansion
-
+const App = () => {
   return (
     <div className="flex">
-      <Sidebar expanded={expanded} setExpanded={setExpanded} />
-
+      <Sidebar />
       <main className="w-full">
-        {children}
+        <Outlet /> {/* This is where the child routes will be rendered */}
       </main>
     </div>
   );
-}
-
-App.propTypes = {
-  children: PropTypes.node, // Validate that `children` is a React node
 };
 
 export default App;
