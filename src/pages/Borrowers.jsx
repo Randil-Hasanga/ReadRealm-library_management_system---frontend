@@ -11,7 +11,7 @@ import Pagination from "../components/Pagination";
 const Borrowers = () => {
     const [borrowers, setBorrowers] = useState([]); // Ensure it's always an array
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5);
+    const [itemsPerPage] = useState(10);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [selectedBorrower, setSelectedBorrower] = useState(null);

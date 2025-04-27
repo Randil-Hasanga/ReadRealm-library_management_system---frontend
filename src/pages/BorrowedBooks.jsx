@@ -4,6 +4,7 @@ import { useState, useEffect, useReducer } from "react";
 import Icon from "../components/Icon";
 import ReturnConfirmationDialog from "../components/ReturnConfirmationDialog";
 import Pagination from "../components/Pagination";
+import LendBookModal from "../models/borrowedBooks/LendBookModal"; // Import the LendBookModal
 
 // Reducer for switching between borrowed books and overdue books
 const switchReducer = (state, action) => {
@@ -22,15 +23,13 @@ const BorrowedBooks = () => {
     const [overdueBooks, setOverdueBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
-    const [selectedBorrowedBook, setSelectedBorrowedBook] = useState(null);
-    const [isReturnDialogOpen, setIsReturnDialogOpen] = useState(false);
+    const [isLendBookModalOpen, setIsLendBookModalOpen] = useState(false); // State for Lend Book Modal
     const [currentBorrowedBookPage, setCurrentBorrowedBookPage] = useState(1);
     const [currentOverdueBookPage, setCurrentOverdueBookPage] = useState(1);
     const [booksPerPage] = useState(10);
 
-    // UseReducer hook for managing the switch between borrowed and overdue
     const [state, dispatch] = useReducer(switchReducer, {
-        activeSection: "borrowed", // default section is borrowed
+        activeSection: "borrowed",
     });
 
     useEffect(() => {
@@ -50,38 +49,23 @@ const BorrowedBooks = () => {
         fetchBooks();
     }, []);
 
-    const handleReturnBookClick = (book) => {
-        setSelectedBorrowedBook(book);
-        setIsReturnDialogOpen(true);
+    const handleLendBookClick = () => {
+        setIsLendBookModalOpen(true); // Open the Lend Book Modal
     };
 
-    const handleCloseReturnDialog = () => {
-        setIsReturnDialogOpen(false);
-        setSelectedBorrowedBook(null);
+    const handleCloseLendBookModal = () => {
+        setIsLendBookModalOpen(false); // Close the Lend Book Modal
     };
 
-    const handleReturnConfirmation = async () => {
-        if (!selectedBorrowedBook) {
-            return;
-        }
-
+    const handleLendBookSubmit = async (lendData) => {
         try {
-            const bb_id = selectedBorrowedBook.BorrowedBookID;
-            const response = await BorrowedBooksService.returnBorrowedBook(bb_id);
-            console.log("Book Returned:", response);
-
-            if (typeof response === 'string') {
-                alert(response);
-                return;
-            }
-
-            const updatedList = await BorrowedBooksService.getBorrowedBooks(true);
+            await BorrowedBooksService.lendBook(lendData); // Call the service to lend the book
+            const updatedList = await BorrowedBooksService.getBorrowedBooks(true); // Refresh the borrowed books list
             setBorrowedBooks(updatedList);
-            setIsReturnDialogOpen(false);
-            setSelectedBorrowedBook(null);
+            setIsLendBookModalOpen(false); // Close the modal
         } catch (error) {
-            console.error("Error returning book:", error);
-            alert('Cannot mark book as returned. Outstanding fines must be paid first.');
+            console.error("Error lending book:", error);
+            setErrorMessage("Failed to lend book.");
         }
     };
 
@@ -133,6 +117,12 @@ const BorrowedBooks = () => {
                     </button>
                 </div>
                 <div className="flex items-center">
+                    <button
+                        onClick={handleLendBookClick}
+                        className="bg-orange-300 shadow-md text-slate-600 px-4 py-2 rounded-md font-bold mr-4"
+                    >
+                        Lend Book
+                    </button>
                     <input
                         type="text"
                         placeholder="Search by ID or Type"
@@ -163,13 +153,10 @@ const BorrowedBooks = () => {
                 </>
             )}
 
-            <ReturnConfirmationDialog
-                isOpen={isReturnDialogOpen}
-                onClose={handleCloseReturnDialog}
-                onConfirm={handleReturnConfirmation}
-                type="book"
-                bookName={selectedBorrowedBook ? selectedBorrowedBook.BookName : ''}
-                borrowerName={selectedBorrowedBook ? selectedBorrowedBook.BorrowerFullName : ''}
+            <LendBookModal
+                isOpen={isLendBookModalOpen}
+                onClose={handleCloseLendBookModal}
+                onSubmit={handleLendBookSubmit}
             />
         </div>
     );

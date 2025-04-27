@@ -70,6 +70,23 @@ const BorrowedBooksService = {
     }
   },
 
+  lendBook: async (lendData) => {
+    try {
+        // Ensure `book_id` and `borrower_id` are numbers
+        const formattedData = {
+            ...lendData,
+            book_id: Number(lendData.book_id),
+            borrower_id: Number(lendData.borrower_id),
+        };
+
+        console.log("Lend Data:", formattedData); // Log the formatted data being sent
+        const response = await axios.post(`${baseUrl}`, formattedData, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        console.error("Error lending book:", error);
+        throw error;
+    }
+},
 
 }
 
